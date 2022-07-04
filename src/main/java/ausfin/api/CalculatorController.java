@@ -1,9 +1,10 @@
 package ausfin.api;
 
+import ausfin.api.records.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping
@@ -13,23 +14,24 @@ public class CalculatorController {
     @Autowired
     TablesService tablesService;
 
-    @PostMapping
-    public String test(@RequestParam(name="income") Integer income) {
-        return String.format("You posted an income of %d", income);
+    @GetMapping(path="tax")
+    public TaxResult tax(@RequestBody @Valid IncomeDTO data) {
+        return calculatorService.calculateTax(data.income());
     }
 
-    @GetMapping(value="camel")
-    public String convert() {
-        return StringUtils.camelCase("Hi There my Name iS AuStiN");
+    @GetMapping(path="super")
+    public SuperResult superann(@RequestBody @Valid IncomeSuperDTO data) {
+        return calculatorService.calculateSuper(data);
     }
 
-    @GetMapping(value="tables")
-    public ArrayList<ArrayList<Float>> table() {
-        return tablesService.getTaxTable();
+    @GetMapping(path="help-repay")
+    public HelpResult help(@RequestBody @Valid IncomeDTO data) {
+        return calculatorService.calculateHELP(data.income());
     }
 
-    @GetMapping(path="hello")
-    public String greeting() {
-        return "Hello";
+    @GetMapping(path="mls")
+    public MlsResult mls(@RequestBody @Valid IncomeDTO data) {
+        return calculatorService.calculateMLS(data.income());
     }
+
 }
