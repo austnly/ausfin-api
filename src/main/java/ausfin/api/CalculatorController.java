@@ -34,4 +34,38 @@ public class CalculatorController {
         return calculatorService.calculateMLS(data.income());
     }
 
+    @GetMapping(path="detailed-tax")
+    public AnnualResult detailedTax(@RequestBody @Valid DetailedTaxDTO data) {
+        NetWorthDTO netWorth = new NetWorthDTO(
+                data.income(),
+                data.helpBalance(),
+                data.superBalance(),
+                data.investmentsBalance());
+
+        IncomeSuperDTO superInfo = new IncomeSuperDTO(
+                data.income(),
+                data.superInclusive(),
+                data.rate(),
+                data.maxSuperContributions());
+
+        ProfileInfoDTO profileInfo = new ProfileInfoDTO(
+                data.expenses(),
+                data.deductions(),
+                data.fringeBenefits(),
+                data.privateHospitalCover()
+        );
+
+        IncomeProfileDTO incomeProfile = new IncomeProfileDTO(netWorth, superInfo, profileInfo);
+
+        AnnualResult detailedResult = calculatorService.taxTime(
+                incomeProfile,
+                data.maxSuper(),
+                data.growth(),
+                data.drawingPhase(),
+                data.paySuper()
+        );
+
+        return detailedResult;
+    }
+
 }
