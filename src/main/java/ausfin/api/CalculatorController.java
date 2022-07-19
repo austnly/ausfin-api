@@ -68,4 +68,9 @@ public class CalculatorController {
         return detailedResult;
     }
 
+//    @GetMapping(path="ptt")
+//    public Integer ptt(@RequestBody IncomeDTO income) {
+//        return calculatorService.preTaxTarget(income.income());
+//    }
+
 }

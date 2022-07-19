@@ -234,4 +234,44 @@ public class CalculatorService {
                 invContrib
         );
     }
+
+    private Integer preTaxTarget (Integer targetIncome) {
+        int testAmt = 2 * targetIncome;
+        int increment = (int)Math.round(targetIncome * 0.5);
+
+        IncomeProfileDTO tester = IncomeProfileDTO.testProfile(testAmt, targetIncome);
+
+        int postTax = (int)Math.round(
+                taxTime(
+                        tester,
+                        false,
+                        0f,
+                        false,
+                        false
+                ).netWorth().getNetIncome());
+
+        while (postTax != targetIncome) {
+            if (postTax > targetIncome) {
+              tester.getNetWorth().setNetIncome(
+                      Math.round(tester.getNetWorth().getNetIncome() - increment)
+              );
+
+              increment *= 0.5;
+            } else {
+              tester.getNetWorth().setNetIncome(
+                      Math.round(tester.getNetWorth().getNetIncome() + increment)
+              );
+            }
+            postTax = (int)Math.round(
+                    taxTime(
+                            tester,
+                            false,
+                            0f,
+                            false,
+                            false
+                    ).netWorth().getNetIncome());
+        }
+
+        return tester.getNetWorth().getNetIncome();
+    }
 }

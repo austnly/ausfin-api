@@ -58,3 +58,29 @@ Send a GET request with the body
     "income": 0 // Any positive integer value
 }
 ```
+
+### /detailed-tax
+
+For calculating your detailed annual tax, HELP-repayment, Medicare, and MLS liability, based on income, investments and super.
+
+Send a GET request with the body
+
+```
+{
+    "income": 0,
+    "helpBalance": 20000,
+    "superBalance": 35000,
+    "investmentsBalance": 75000,
+    "superInclusive": true,
+    "rate": 10,
+    "maxSuperContributions": false,
+    "expenses": 35000,
+    "deductions": 5000,
+    "fringeBenefits": 0,
+    "privateHospitalCover": false,
+    "maxSuper": false,
+    "growth": 10,
+    "drawingPhase": false,
+    "paySuper": true
+}
+```

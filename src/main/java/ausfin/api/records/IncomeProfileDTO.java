@@ -1,5 +1,7 @@
 package ausfin.api.records;
 
+import org.springframework.context.annotation.Profile;
+
 public class IncomeProfileDTO {
     private NetWorthDTO netWorth;
     private IncomeSuperDTO superInfo;
@@ -9,6 +11,13 @@ public class IncomeProfileDTO {
         this.netWorth = netWorth;
         this.superInfo = superInfo;
         this.profile = profile;
+    }
+
+    public static IncomeProfileDTO testProfile(Integer income, Integer expenses) {
+        NetWorthDTO netWorthDTO = new NetWorthDTO(income, 0, 0, 0);
+        IncomeSuperDTO incomeSuperDTO = new IncomeSuperDTO(income, false, 0f, false);
+        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(expenses, 0, 0,false);
+        return new IncomeProfileDTO(netWorthDTO, incomeSuperDTO, profileInfoDTO);
     }
 
     public NetWorthDTO getNetWorth() {
