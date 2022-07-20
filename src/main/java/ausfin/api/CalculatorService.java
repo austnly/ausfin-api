@@ -158,7 +158,7 @@ public class CalculatorService {
         // Otherwise will just be the required income
         income = !drawingPhase
                 ? income + invBalGrowth
-                : invBalGrowth > incomeProfileDTO.getNetWorth().getNetIncome()
+                : invBalGrowth > income
                 ? invBalGrowth
                 : income;
 
@@ -216,7 +216,6 @@ public class CalculatorService {
                             mlsRepay +
                             incomeProfileDTO.getProfile().expenses()
             );}
-        System.out.println("Investments Contribution is "+ invContrib);
 
         // Update investments
         int newInv = updateInvestments(
@@ -293,10 +292,7 @@ public class CalculatorService {
             age++;
             int invGrowth = updateInvestments(invBal, 0, growth).increaseAmt();
             int withdrawal = invGrowth > target ? invGrowth : target;
-            System.out.println("*********** invBal before = " + invBal);
-            System.out.println("*********** withdrawal = " + withdrawal);
             invBal = Math.round(invBal * (1 + growth / 100) - withdrawal);
-            System.out.println("*********** invBal after = " + invBal);
 
             // if at any point before reaching age 60, invBal reaches <0, then balance is insufficient
             if (invBal < 0) {
@@ -336,10 +332,10 @@ public class CalculatorService {
             Float growth
     ) {
         int reqIncome = preTaxTarget(fullProfile.getProfile().expenses());
-        System.out.println("Required income/Pre-tax target is: " + reqIncome);
+//        System.out.println("Required income/Pre-tax target is: " + reqIncome);
 
         int fireNum = getFireNumber(reqIncome);
-        System.out.println("Fire number is: " + fireNum);
+//        System.out.println("Fire number is: " + fireNum);
         int startAge = age;
 
         int year = 0;
@@ -412,7 +408,12 @@ public class CalculatorService {
         System.out.printf("You will reach FIRE in %d years!\n", fireYears);
 
         IncomeProfileDTO fireProfile = new IncomeProfileDTO(
-                yearEnd.getNetWorth(),
+                new NetWorthDTO(
+                        reqIncome,
+                        yearEnd.getNetWorth().getHelpBalance(),
+                        yearEnd.getNetWorth().getSuperBalance(),
+                        yearEnd.getNetWorth().getInvestmentsBalance()
+                ),
                 new IncomeSuperDTO(
                         reqIncome,
                         false,
