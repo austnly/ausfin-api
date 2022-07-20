@@ -4,6 +4,8 @@
 
 A Java/Spring API project to handle the calculation logic for my aus/fin project [front-end](https://github.com/austnly/ausfin).
 
+_Project is currently in progress + calculations may be buggy!_
+
 ### 🚀 [Live API @ https://ausfin-api.herokuapp.com/](https://ausfin-api.herokuapp.com/)
 
 ## Current Working Endpoints
