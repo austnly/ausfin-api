@@ -117,7 +117,7 @@ public class CalculatorService {
 
     private InvestmentsDTO updateInvestments(Integer current, Integer invContribution, Float growth) {
         return new InvestmentsDTO(
-          Math.round(current * (1 + growth/100) + invContribution),
+          Math.round(current * (1 + growth/100)),
           Math.round(current * growth/100)
         );
     }
