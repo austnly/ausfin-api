@@ -342,11 +342,10 @@ public class CalculatorService {
         IncomeProfileDTO yearEnd = IncomeProfileDTO.copy(fullProfile);
 
         System.out.printf(
-                "Starting HELP: %d\nStarting Investments: %d\nStarting Super: %d\nTotal Net Worth: %d\n",
+                "Starting HELP: %d\nStarting Investments: %d\nStarting Super: %d\n",
                 yearEnd.getNetWorth().getHelpBalance(),
                 yearEnd.getNetWorth().getInvestmentsBalance(),
-                yearEnd.getNetWorth().getSuperBalance(),
-                yearEnd.getNetWorth().result()
+                yearEnd.getNetWorth().getSuperBalance()
         );
 //            // console.log("-------After Copy:", yearEnd);
 //
@@ -365,13 +364,12 @@ public class CalculatorService {
             yearEnd.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
             yearEnd.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
             System.out.printf(
-                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\n",
                     year,
                     yearEnd.getNetWorth().getHelpBalance(),
                     yearEnd.getNetWorth().getInvestmentsBalance(),
                     yearEnd.getNetWorth().getSuperBalance(),
-                    netPosition.availableToInvest(),
-                    yearEnd.getNetWorth().result()
+                    netPosition.availableToInvest()
             );
         }
 
@@ -395,13 +393,12 @@ public class CalculatorService {
             yearEnd.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
             yearEnd.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
             System.out.printf(
-                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\n",
                     year,
                     yearEnd.getNetWorth().getHelpBalance(),
                     yearEnd.getNetWorth().getInvestmentsBalance(),
                     yearEnd.getNetWorth().getSuperBalance(),
-                    netPosition.availableToInvest(),
-                    yearEnd.getNetWorth().result()
+                    netPosition.availableToInvest()
             );
         }
 
@@ -429,21 +426,20 @@ public class CalculatorService {
             age++;
 
             AnnualResult netPosition = taxTime(fireProfile, false, growth, true, false);
-            fireProfile.getNetWorth().setHelpBalance(netPosition.netWorth().getHelpBalance());
-            fireProfile.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
-            fireProfile.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
+            yearEnd.getNetWorth().setHelpBalance(netPosition.netWorth().getHelpBalance());
+            yearEnd.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
+            yearEnd.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
             System.out.printf(
-                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\n",
                     year,
-                    fireProfile.getNetWorth().getHelpBalance(),
-                    fireProfile.getNetWorth().getInvestmentsBalance(),
-                    fireProfile.getNetWorth().getSuperBalance(),
-                    netPosition.availableToInvest(),
-                    fireProfile.getNetWorth().result()
+                    yearEnd.getNetWorth().getHelpBalance(),
+                    yearEnd.getNetWorth().getInvestmentsBalance(),
+                    yearEnd.getNetWorth().getSuperBalance(),
+                    netPosition.availableToInvest()
             );
         }
 
-        System.out.println("Final Net Worth @ 60: " + fireProfile.getNetWorth().result());
+        System.out.println("Final Net Worth @ 60: " + yearEnd.getNetWorth().result());
 
         return new FireResult(
                 fireProfile,

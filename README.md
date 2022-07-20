@@ -84,30 +84,3 @@ Send a GET request with the body
     "paySuper": true
 }
 ```
-
-### /fire
-
-For calculating your years to reach FIRE and final net worth.
-
-Send a GET request with the body
-
-```
-{
-    "age": 30,
-    "income": 0,
-    "helpBalance": 20000,
-    "superBalance": 35000,
-    "investmentsBalance": 75000,
-    "superInclusive": true,
-    "rate": 10,
-    "maxSuperContributions": false,
-    "expenses": 35000,
-    "deductions": 5000,
-    "fringeBenefits": 0,
-    "privateHospitalCover": false,
-    "maxSuper": false,
-    "growth": 10,
-    "drawingPhase": false,
-    "paySuper": true
-}
-```
