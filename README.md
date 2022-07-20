@@ -104,7 +104,7 @@ Send a GET request with the body
     "expenses": 35000, // Your after tax annual expenses
     "deductions": 5000, // Any pre-tax deductions you can make from your gross income
     "fringeBenefits": 0, // Value of any fringe benefits you receive from your employer
-    "privateHospitalCover": true, // true if you have Hospital insurance that exempts you from the Medicare Levy Surcharge
+    "privateHospitalCover": false, // true if you have
     "maxSuper": false, // duplicate property - to fix
     "growth": 7, // Assumed growth rate of investments and super as a percentage , i.e. 7 for 7%
     "drawingPhase": false, // to be removed, leave as false
