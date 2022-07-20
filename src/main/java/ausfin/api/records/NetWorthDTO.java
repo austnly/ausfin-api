@@ -34,6 +34,10 @@ public class NetWorthDTO {
         this.investmentsBalance = investmentsBalance;
     }
 
+    public Integer result() {
+        return this.superBalance + this.investmentsBalance - this.helpBalance;
+    }
+
     public Integer getNetIncome() {
         return netIncome;
     }

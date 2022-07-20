@@ -20,6 +20,28 @@ public class IncomeProfileDTO {
         return new IncomeProfileDTO(netWorthDTO, incomeSuperDTO, profileInfoDTO);
     }
 
+    public static IncomeProfileDTO copy(IncomeProfileDTO profile) {
+        NetWorthDTO netWorthDTO = new NetWorthDTO(
+                profile.getNetWorth().getNetIncome(),
+                profile.getNetWorth().getHelpBalance(),
+                profile.getNetWorth().getSuperBalance(),
+                profile.getNetWorth().getInvestmentsBalance()
+        );
+        IncomeSuperDTO incomeSuperDTO = new IncomeSuperDTO(
+                profile.getSuperInfo().income(),
+                profile.getSuperInfo().superInclusive(),
+                profile.getSuperInfo().rate(),
+                profile.getSuperInfo().maxSuperContributions()
+        );
+        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(
+                profile.getProfile().expenses(),
+                profile.getProfile().deductions(),
+                profile.getProfile().fringeBenefits(),
+                profile.getProfile().privateHospitalCover()
+        );
+        return new IncomeProfileDTO(netWorthDTO, incomeSuperDTO, profileInfoDTO);
+    }
+
     public NetWorthDTO getNetWorth() {
         return netWorth;
     }

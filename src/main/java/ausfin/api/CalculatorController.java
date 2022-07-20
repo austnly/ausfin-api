@@ -68,9 +68,38 @@ public class CalculatorController {
         return detailedResult;
     }
 
+    @GetMapping(path="fire")
+    public FireResult fire(@RequestBody @Valid FireInputDTO data) {
+        NetWorthDTO netWorth = new NetWorthDTO(
+                data.income(),
+                data.helpBalance(),
+                data.superBalance(),
+                data.investmentsBalance());
+
+        IncomeSuperDTO superInfo = new IncomeSuperDTO(
+                data.income(),
+                data.superInclusive(),
+                data.rate(),
+                data.maxSuperContributions());
+
+        ProfileInfoDTO profileInfo = new ProfileInfoDTO(
+                data.expenses(),
+                data.deductions(),
+                data.fringeBenefits(),
+                data.privateHospitalCover()
+        );
+
+        IncomeProfileDTO incomeProfile = new IncomeProfileDTO(netWorth, superInfo, profileInfo);
+
+        FireResult fireResult = calculatorService.timeToFire(incomeProfile, data.age(), data.growth());
+
+        return fireResult;
+    }
+
 //    @GetMapping(path="ptt")
 //    public Integer ptt(@RequestBody IncomeDTO income) {
 //        return calculatorService.preTaxTarget(income.income());
 //    }
+
 
 }

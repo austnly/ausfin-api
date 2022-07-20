@@ -117,7 +117,7 @@ public class CalculatorService {
 
     private InvestmentsDTO updateInvestments(Integer current, Integer invContribution, Float growth) {
         return new InvestmentsDTO(
-          Math.round(current * (1 + growth/100)),
+          Math.round(current * (1 + growth/100) + invContribution),
           Math.round(current * growth/100)
         );
     }
@@ -158,7 +158,7 @@ public class CalculatorService {
         // Otherwise will just be the required income
         income = !drawingPhase
                 ? income + invBalGrowth
-                : invBalGrowth > incomeProfileDTO.getNetWorth().getNetIncome()
+                : invBalGrowth > income
                 ? invBalGrowth
                 : income;
 
@@ -273,5 +273,185 @@ public class CalculatorService {
         }
 
         return tester.getNetWorth().getNetIncome();
+    }
+
+    private int getFireNumber(Integer income) {
+        return (int)Math.round(income / 0.04);
+    }
+
+    private boolean invTargetReached(
+            Integer balance,
+            Float growth,
+            Integer target,
+            Integer currentAge
+    ) {
+        int age = currentAge;
+        int invBal = balance;
+
+        while(age <= 60) {
+            age++;
+            int invGrowth = updateInvestments(invBal, 0, growth).increaseAmt();
+            int withdrawal = invGrowth > target ? invGrowth : target;
+            invBal = Math.round(invBal * (1 + growth / 100) - withdrawal);
+
+            // if at any point before reaching age 60, invBal reaches <0, then balance is insufficient
+            if (invBal < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private SuperTargetDTO superTargetReached(
+            Integer balance,
+            Integer expenses,
+            Integer contrib,
+            Integer age,
+            Float growth
+    ) {
+        int year = 0;
+        int target = getFireNumber(expenses);
+
+        // Balance by age 60 without further contributions (growth is taxed 15%)
+        double retireBal = balance * Math.pow(1 + (growth/100 * 0.85), 60 - age);
+
+        // If super balance is not sufficient to reach target, increment by a year and contribute to super
+        while (retireBal < target) {
+            year++;
+            age++;
+            balance = updateSuper(balance, contrib, growth);
+            retireBal = balance * Math.pow(1 + (growth/100 * 0.85), 60 - age);
+        }
+
+        return new SuperTargetDTO(age, balance, target, (int)Math.round(retireBal));
+    }
+
+    public FireResult timeToFire(
+            IncomeProfileDTO fullProfile,
+            Integer age,
+            Float growth
+    ) {
+        int reqIncome = preTaxTarget(fullProfile.getProfile().expenses());
+//        System.out.println("Required income/Pre-tax target is: " + reqIncome);
+
+        int fireNum = getFireNumber(reqIncome);
+//        System.out.println("Fire number is: " + fireNum);
+        int startAge = age;
+
+        int year = 0;
+        IncomeProfileDTO yearEnd = IncomeProfileDTO.copy(fullProfile);
+
+        System.out.printf(
+                "Starting HELP: %d\nStarting Investments: %d\nStarting Super: %d\nTotal Net Worth: %d\n",
+                yearEnd.getNetWorth().getHelpBalance(),
+                yearEnd.getNetWorth().getInvestmentsBalance(),
+                yearEnd.getNetWorth().getSuperBalance(),
+                yearEnd.getNetWorth().result()
+        );
+
+        while (
+                !invTargetReached(
+                        yearEnd.getNetWorth().getInvestmentsBalance(),
+                        growth,
+                        reqIncome,
+                        age
+                )
+        ) {
+            year++;
+            age++;
+            AnnualResult netPosition = taxTime(yearEnd, false, growth, false, true);
+            yearEnd.getNetWorth().setHelpBalance(netPosition.netWorth().getHelpBalance());
+            yearEnd.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
+            yearEnd.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
+            System.out.printf(
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    year,
+                    yearEnd.getNetWorth().getHelpBalance(),
+                    yearEnd.getNetWorth().getInvestmentsBalance(),
+                    yearEnd.getNetWorth().getSuperBalance(),
+                    netPosition.availableToInvest(),
+                    yearEnd.getNetWorth().result()
+            );
+        }
+
+        System.out.println("Investments will reach target balance at age " + age);
+        System.out.println("Maximising super contributions");
+
+        SuperTargetDTO targetSuper = superTargetReached(
+                yearEnd.getNetWorth().getSuperBalance(),
+                yearEnd.getProfile().expenses(),
+                27500,
+                age,
+                growth
+        );
+
+        while (age < targetSuper.age() + 1) {
+            year++;
+            age++;
+
+            AnnualResult netPosition = taxTime(yearEnd, true, growth, false, true);
+            yearEnd.getNetWorth().setHelpBalance(netPosition.netWorth().getHelpBalance());
+            yearEnd.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
+            yearEnd.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
+            System.out.printf(
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    year,
+                    yearEnd.getNetWorth().getHelpBalance(),
+                    yearEnd.getNetWorth().getInvestmentsBalance(),
+                    yearEnd.getNetWorth().getSuperBalance(),
+                    netPosition.availableToInvest(),
+                    yearEnd.getNetWorth().result()
+            );
+        }
+
+        int fireYears = year;
+        System.out.printf("You will reach FIRE in %d years!\n", fireYears);
+
+        IncomeProfileDTO fireProfile = new IncomeProfileDTO(
+                new NetWorthDTO(
+                        reqIncome,
+                        yearEnd.getNetWorth().getHelpBalance(),
+                        yearEnd.getNetWorth().getSuperBalance(),
+                        yearEnd.getNetWorth().getInvestmentsBalance()
+                ),
+                new IncomeSuperDTO(
+                        reqIncome,
+                        false,
+                        0f,
+                        false
+                ),
+                new ProfileInfoDTO(
+                        yearEnd.getProfile().expenses(),
+                        0,
+                        0,
+                        yearEnd.getProfile().privateHospitalCover()
+                )
+        );
+
+        while (age < 60) {
+            year++;
+            age++;
+
+            AnnualResult netPosition = taxTime(fireProfile, false, growth, true, false);
+            fireProfile.getNetWorth().setHelpBalance(netPosition.netWorth().getHelpBalance());
+            fireProfile.getNetWorth().setInvestmentsBalance(netPosition.netWorth().getInvestmentsBalance());
+            fireProfile.getNetWorth().setSuperBalance(netPosition.netWorth().getSuperBalance());
+            System.out.printf(
+                    "Year %d\nHELP: %d\nInvestments: %d\nSuper: %d\nInvested this year: %d\nTotal Net Worth: %d\n",
+                    year,
+                    fireProfile.getNetWorth().getHelpBalance(),
+                    fireProfile.getNetWorth().getInvestmentsBalance(),
+                    fireProfile.getNetWorth().getSuperBalance(),
+                    netPosition.availableToInvest(),
+                    fireProfile.getNetWorth().result()
+            );
+        }
+
+        System.out.println("Final Net Worth @ 60: " + fireProfile.getNetWorth().result());
+
+        return new FireResult(
+                fireProfile,
+                fireYears
+        );
     }
 }
