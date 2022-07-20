@@ -117,7 +117,7 @@ public class CalculatorService {
 
     private InvestmentsDTO updateInvestments(Integer current, Integer invContribution, Float growth) {
         return new InvestmentsDTO(
-          Math.round(current * (1 + growth/100)),
+          Math.round(current * (1 + growth/100) + invContribution),
           Math.round(current * growth/100)
         );
     }
@@ -216,6 +216,7 @@ public class CalculatorService {
                             mlsRepay +
                             incomeProfileDTO.getProfile().expenses()
             );}
+        System.out.println("Investments Contribution is "+ invContrib);
 
         // Update investments
         int newInv = updateInvestments(
@@ -348,8 +349,7 @@ public class CalculatorService {
                 yearEnd.getNetWorth().getSuperBalance(),
                 yearEnd.getNetWorth().result()
         );
-//            // console.log("-------After Copy:", yearEnd);
-//
+
         while (
                 !invTargetReached(
                         yearEnd.getNetWorth().getInvestmentsBalance(),
