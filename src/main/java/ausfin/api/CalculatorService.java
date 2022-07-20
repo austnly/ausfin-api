@@ -287,13 +287,16 @@ public class CalculatorService {
             Integer currentAge
     ) {
         int age = currentAge;
-        double invBal = balance;
+        int invBal = balance;
 
         while(age <= 60) {
             age++;
-            int invGrowth = updateInvestments(balance, 0, growth).increaseAmt();
+            int invGrowth = updateInvestments(invBal, 0, growth).increaseAmt();
             int withdrawal = invGrowth > target ? invGrowth : target;
-            invBal = (invBal - withdrawal) * (1 + growth / 100);
+            System.out.println("*********** invBal before = " + invBal);
+            System.out.println("*********** withdrawal = " + withdrawal);
+            invBal = Math.round(invBal * (1 + growth / 100) - withdrawal);
+            System.out.println("*********** invBal after = " + invBal);
 
             // if at any point before reaching age 60, invBal reaches <0, then balance is insufficient
             if (invBal < 0) {
