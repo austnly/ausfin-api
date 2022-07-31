@@ -282,11 +282,13 @@ public class CalculatorService {
     private boolean invTargetReached(
             Integer balance,
             Float growth,
-            Integer target,
+            Integer required,
             Integer currentAge
     ) {
         int age = currentAge;
         int invBal = balance;
+        int target = (int)Math.round(required * 2); // safety factor
+//        int target = required;
 
         while(age <= 60) {
             age++;
