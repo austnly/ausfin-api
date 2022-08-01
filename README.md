@@ -14,7 +14,7 @@ _Project is currently in progress + calculations may be buggy!_
 
 For calculating your tax based only on taxable income.
 
-Send a GET request with the body
+Send a POST request with the body
 
 ```
 {
@@ -26,13 +26,13 @@ Send a GET request with the body
 
 For calculating how much super is paid from or on top of your income, depending on parameters passed, and your income after super.
 
-Send a GET request with the body
+Send a POST request with the body
 
 ```
 {
     "income": 100000, // Any positive integer value
     "superInclusive": true, // Whether above income includes super
-    "rate": 0.1, // Your super payment rate as a decimal (i.e. 10% is 0.1)
+    "rate": 15.4, // Your super payment rate as a percentage (e.g. 15.4% is 15.4)
     "maxSuperContributions": false // Whether you want the result for the maximum concessional contributions you can make for Super
 }
 ```
@@ -45,7 +45,9 @@ Send a GET request with the body
 
 ```
 {
-    "income": 0 // Any positive integer value
+    "income": 0, // Any positive integer value
+    "reportableSuperContributions": 0, // Any positive integer value
+    "reportableFringeBenefits": 0 // Any positive integer value
 }
 ```
 
@@ -53,11 +55,12 @@ Send a GET request with the body
 
 For calculating your Medicare Levy Surcharge based only on an income value.
 
-Send a GET request with the body
+Send a POST request with the body
 
 ```
 {
-    "income": 0 // Any positive integer value
+    "income": 0, // Any positive integer value
+    "reportableFringeBenefits": 0  // Any positive integer value
 }
 ```
 
@@ -65,25 +68,23 @@ Send a GET request with the body
 
 For calculating your detailed annual tax, HELP-repayment, Medicare, and MLS liability, based on income, investments and super.
 
-Send a GET request with the body
+Send a POST request with the body
 
 ```
 {
-    "income": 90000,
+    "grossIncome": 90000,
     "helpBalance": 50000,
     "superBalance": 50000,
     "investmentsBalance": 50000,
     "superInclusive": true,
-    "rate": 10,
+    "superContributionRate": 10,
     "maxSuperContributions": false,
     "expenses": 35000,
     "deductions": 5000,
     "fringeBenefits": 0,
     "privateHospitalCover": false,
     "maxSuper": false,
-    "growth": 7,
-    "drawingPhase": false,
-    "paySuper": true
+    "assumedGrowth": 7
 }
 ```
 
@@ -91,7 +92,7 @@ Send a GET request with the body
 
 For calculating your years to reach FIRE and final net worth.
 
-Send a GET request with the body
+Send a POST request with the body
 
 ```
 {
