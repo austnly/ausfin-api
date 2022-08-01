@@ -26,13 +26,13 @@ public class CalculatorController {
     }
 
     @PostMapping(path="help-repay")
-    public HelpResult help(@RequestBody @Valid MlsDTO data) {
-        return calculatorService.calculateHELP(data.income() + data.reportableFringeBenefits());
+    public HelpResult help(@RequestBody @Valid IncomeDTO data) {
+        return calculatorService.calculateHELP(data.income());
     }
 
     @PostMapping(path="mls")
-    public MlsResult mls(@RequestBody @Valid IncomeDTO data) {
-        return calculatorService.calculateMLS(data.income());
+    public MlsResult mls(@RequestBody @Valid MlsDTO data) {
+        return calculatorService.calculateMLS(data.income() + data.reportableFringeBenefits());
     }
 
     @PostMapping(path="detailed-tax")
