@@ -41,15 +41,15 @@ public class CalculatorController {
     @PostMapping(path="detailed-tax")
     public AnnualResult detailedTax(@RequestBody @Valid DetailedTaxDTO data) {
         NetWorthDTO netWorth = new NetWorthDTO(
-                data.income(),
+                data.grossIncome(),
                 data.helpBalance(),
                 data.superBalance(),
                 data.investmentsBalance());
 
         IncomeSuperDTO superInfo = new IncomeSuperDTO(
-                data.income(),
+                data.grossIncome(),
                 data.superInclusive(),
-                data.rate(),
+                data.superContributionRate(),
                 data.maxSuperContributions());
 
         ProfileInfoDTO profileInfo = new ProfileInfoDTO(
@@ -64,9 +64,9 @@ public class CalculatorController {
         AnnualResult detailedResult = calculatorService.taxTime(
                 incomeProfile,
                 data.maxSuper(),
-                data.growth(),
-                data.drawingPhase(),
-                data.paySuper()
+                data.assumedGrowth(),
+                false,
+                true
         );
 
         return detailedResult;
