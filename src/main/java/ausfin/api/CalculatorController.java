@@ -14,27 +14,27 @@ public class CalculatorController {
     @Autowired
     TablesService tablesService;
 
-    @GetMapping(path="tax")
+    @PostMapping(path="tax")
     public TaxResult tax(@RequestBody @Valid IncomeDTO data) {
         return calculatorService.calculateTax(data.income());
     }
 
-    @GetMapping(path="super")
+    @PostMapping(path="super")
     public SuperResult superann(@RequestBody @Valid IncomeSuperDTO data) {
         return calculatorService.calculateSuper(data);
     }
 
-    @GetMapping(path="help-repay")
+    @PostMapping(path="help-repay")
     public HelpResult help(@RequestBody @Valid IncomeDTO data) {
         return calculatorService.calculateHELP(data.income());
     }
 
-    @GetMapping(path="mls")
+    @PostMapping(path="mls")
     public MlsResult mls(@RequestBody @Valid IncomeDTO data) {
         return calculatorService.calculateMLS(data.income());
     }
 
-    @GetMapping(path="detailed-tax")
+    @PostMapping(path="detailed-tax")
     public AnnualResult detailedTax(@RequestBody @Valid DetailedTaxDTO data) {
         NetWorthDTO netWorth = new NetWorthDTO(
                 data.income(),
@@ -68,7 +68,7 @@ public class CalculatorController {
         return detailedResult;
     }
 
-    @GetMapping(path="fire")
+    @PostMapping(path="fire")
     public FireResult fire(@RequestBody @Valid FireInputDTO data) {
         NetWorthDTO netWorth = new NetWorthDTO(
                 data.income(),
