@@ -82,15 +82,15 @@ public class CalculatorController {
 
         IncomeSuperDTO superInfo = new IncomeSuperDTO(
                 data.income(),
-                data.superInclusive(),
+                data.superInclusive() != null ? data.superInclusive() : false,
                 data.superContributionRate(),
-                data.maxSuperContributions());
+                data.maxSuperContributions() != null ? data.maxSuperContributions() : false);
 
         ProfileInfoDTO profileInfo = new ProfileInfoDTO(
                 data.expenses(),
                 data.deductions(),
                 data.fringeBenefits(),
-                data.privateHospitalCover()
+                data.privateHospitalCover() != null ? data.privateHospitalCover() : false
         );
 
         IncomeProfileDTO incomeProfile = new IncomeProfileDTO(netWorth, superInfo, profileInfo);
