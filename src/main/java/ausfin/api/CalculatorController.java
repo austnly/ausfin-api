@@ -83,7 +83,7 @@ public class CalculatorController {
         IncomeSuperDTO superInfo = new IncomeSuperDTO(
                 data.income(),
                 data.superInclusive(),
-                data.rate(),
+                data.superContributionRate(),
                 data.maxSuperContributions());
 
         ProfileInfoDTO profileInfo = new ProfileInfoDTO(
@@ -95,7 +95,7 @@ public class CalculatorController {
 
         IncomeProfileDTO incomeProfile = new IncomeProfileDTO(netWorth, superInfo, profileInfo);
 
-        FireResult fireResult = calculatorService.timeToFire(incomeProfile, data.age(), data.growth());
+        FireResult fireResult = calculatorService.timeToFire(incomeProfile, data.age(), data.assumedGrowth());
 
         return fireResult;
     }
