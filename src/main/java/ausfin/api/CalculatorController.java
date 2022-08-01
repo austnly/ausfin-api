@@ -26,8 +26,8 @@ public class CalculatorController {
     }
 
     @PostMapping(path="help-repay")
-    public HelpResult help(@RequestBody @Valid IncomeDTO data) {
-        return calculatorService.calculateHELP(data.income());
+    public HelpResult help(@RequestBody @Valid MlsDTO data) {
+        return calculatorService.calculateHELP(data.income() + data.reportableFringeBenefits());
     }
 
     @PostMapping(path="mls")
