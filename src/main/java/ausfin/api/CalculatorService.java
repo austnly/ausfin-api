@@ -38,8 +38,8 @@ public class CalculatorService {
     public SuperResult calculateSuper(IncomeSuperDTO data) {
         Integer income = data.income();
         Float rate = data.rate();
-        Boolean superInclusive = data.superInclusive();
-        Boolean maxSuperContributions = data.maxSuperContributions();
+        Boolean superInclusive = data.superInclusive() != null ? data.superInclusive() : false;
+        Boolean maxSuperContributions = data.maxSuperContributions() != null ? data.maxSuperContributions() : false;
 
         Integer totalSup;
         Integer incExclSup;

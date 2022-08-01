@@ -8,15 +8,15 @@ public record DetailedTaxDTO(
         @NotNull Integer helpBalance,
         @NotNull Integer superBalance,
         @NotNull Integer investmentsBalance,
-        @NotNull Boolean superInclusive,
+        Boolean superInclusive,
 
         @NotNull @Positive Float superContributionRate,
-        @NotNull Boolean maxSuperContributions,
+        Boolean maxSuperContributions,
         @NotNull Integer expenses,
         @NotNull Integer deductions,
         @NotNull Integer fringeBenefits,
-        @NotNull Boolean privateHospitalCover,
-        @NotNull Boolean maxSuper,
+        Boolean privateHospitalCover,
+//        @NotNull Boolean maxSuper,
         @NotNull Float assumedGrowth
 //        @NotNull Boolean drawingPhase,
 //        @NotNull Boolean paySuper

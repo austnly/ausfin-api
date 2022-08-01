@@ -48,7 +48,7 @@ public class CalculatorController {
 
         IncomeSuperDTO superInfo = new IncomeSuperDTO(
                 data.grossIncome(),
-                data.superInclusive(),
+                data.superInclusive() != null ? data.superInclusive() : false,
                 data.superContributionRate(),
                 data.maxSuperContributions());
 
@@ -56,14 +56,14 @@ public class CalculatorController {
                 data.expenses(),
                 data.deductions(),
                 data.fringeBenefits(),
-                data.privateHospitalCover()
+                data.privateHospitalCover() != null ? data.privateHospitalCover() : false
         );
 
         IncomeProfileDTO incomeProfile = new IncomeProfileDTO(netWorth, superInfo, profileInfo);
 
         AnnualResult detailedResult = calculatorService.taxTime(
                 incomeProfile,
-                data.maxSuper(),
+                data.maxSuperContributions() != null ? data.maxSuperContributions() : false,
                 data.assumedGrowth(),
                 false,
                 true
