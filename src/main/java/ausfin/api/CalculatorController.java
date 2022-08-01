@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","https://www.astnly.com/ausfin/"})
 @RestController
 @RequestMapping
 public class CalculatorController {
