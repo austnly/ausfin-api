@@ -32,7 +32,7 @@ public class CalculatorService {
             }
         }
 
-        return new TaxResult(baseTax, taxRate, total, income-total);
+        return new TaxResult(baseTax, taxRate, total, income - total);
     }
 
     public SuperResult calculateSuper(IncomeSuperDTO data) {
@@ -112,17 +112,17 @@ public class CalculatorService {
     }
 
     private Integer updateSuper(Integer current, Integer superContribution, Float growth) {
-        return Math.round(current * (1 + (growth * 0.85f)/100) + superContribution * 0.85f);
+        return Math.round(current * (1 + (growth * 0.85f) / 100) + superContribution * 0.85f);
     }
 
     private InvestmentsDTO updateInvestments(Integer current, Integer invContribution, Float growth) {
         return new InvestmentsDTO(
-          Math.round(current * (1 + growth/100) + invContribution),
-          Math.round(current * growth/100)
-        );
+                Math.round(current * (1 + growth / 100) + invContribution),
+                Math.round(current * growth / 100));
     }
 
-    public AnnualResult taxTime(IncomeProfileDTO incomeProfileDTO, Boolean maxSuper, Float growth, Boolean drawingPhase, Boolean paySuper) {
+    public AnnualResult taxTime(IncomeProfileDTO incomeProfileDTO, Boolean maxSuper, Float growth, Boolean drawingPhase,
+            Boolean paySuper) {
         int income = incomeProfileDTO.getNetWorth().getNetIncome();
         int superCont = 0, reportableSup = 0;
         SuperResult superResult;
@@ -133,7 +133,8 @@ public class CalculatorService {
             boolean superInclusive = incomeProfileDTO.getSuperInfo().superInclusive();
             float superContributionRate = incomeProfileDTO.getSuperInfo().rate();
 
-            superResult = calculateSuper(new IncomeSuperDTO(netIncome, superInclusive, superContributionRate, maxSuper));
+            superResult = calculateSuper(
+                    new IncomeSuperDTO(netIncome, superInclusive, superContributionRate, maxSuper));
 
             income = superResult.incomeAfterSuper();
             superCont = superResult.superContribution();
@@ -150,8 +151,7 @@ public class CalculatorService {
         int invBalGrowth = updateInvestments(
                 incomeProfileDTO.getNetWorth().getInvestmentsBalance(),
                 0,
-                growth
-            ).increaseAmt();
+                growth).increaseAmt();
 
         // Taxable income if not in drawing phase is income + investments growth,
         // If drawing phase, will be investments growth if greater than required income,
@@ -159,30 +159,31 @@ public class CalculatorService {
         income = !drawingPhase
                 ? income + invBalGrowth
                 : invBalGrowth > income
-                ? invBalGrowth
-                : income;
+                        ? invBalGrowth
+                        : income;
 
         // Income minus deductions
         income -= incomeProfileDTO.getProfile().deductions();
 
-        // HELP repayment and new balance based on net income, reportable Super and fringe benefits
+        // HELP repayment and new balance based on net income, reportable Super and
+        // fringe benefits
         HelpResult help = calculateHELP(
                 income
-                + reportableSup
-                + incomeProfileDTO.getProfile().fringeBenefits());
+                        + reportableSup
+                        + incomeProfileDTO.getProfile().fringeBenefits());
         int helpRepayment = help.helpRepayment();
         HelpBalanceDTO newHelp = updateHelp(incomeProfileDTO.getNetWorth().getHelpBalance(), helpRepayment);
         int helpBalance = newHelp.balance();
         int helpOver = newHelp.additional();
 
         // Medicare levy
-        // low-income - medicare levy is 10% of amount over exempt threshold 23,266, above 29,033 is 2% of income
-        int medicare =
-                income < 23226
-                        ? 0
-                        : income < 29033
-                        ? (int)Math.round((income - 23266) * 0.1)
-                        : (int)Math.round(0.02 * income);
+        // low-income - medicare levy is 10% of amount over exempt threshold 23,266,
+        // above 29,033 is 2% of income
+        int medicare = income < 23226
+                ? 0
+                : income < 29033
+                        ? (int) Math.round((income - 23266) * 0.1)
+                        : (int) Math.round(0.02 * income);
 
         // Income tax
         TaxResult taxResult = calculateTax(income);
@@ -200,29 +201,26 @@ public class CalculatorService {
 
         // Net income after ATO
         income = Math.round(
-                income - tax - helpRepayment + helpOver - medicare - mlsRepay
-                );
+                income - tax - helpRepayment + helpOver - medicare - mlsRepay);
 
         // Are we adding to investments or drawing income from investments?
         int invContrib = 0;
         if (!drawingPhase) {
             invContrib = income - incomeProfileDTO.getProfile().expenses();
         } else {
-            invContrib = -(
-                    tax +
-                            helpRepayment -
-                            helpOver +
-                            medicare +
-                            mlsRepay +
-                            incomeProfileDTO.getProfile().expenses()
-            );}
+            invContrib = -(tax +
+                    helpRepayment -
+                    helpOver +
+                    medicare +
+                    mlsRepay +
+                    incomeProfileDTO.getProfile().expenses());
+        }
 
         // Update investments
         int newInv = updateInvestments(
                 incomeProfileDTO.getNetWorth().getInvestmentsBalance(),
                 invContrib,
-                growth
-                ).invBal();
+                growth).invBal();
 
         return new AnnualResult(
                 new NetWorthDTO(income, helpBalance, newSuper, newInv),
@@ -231,72 +229,67 @@ public class CalculatorService {
                 help,
                 mls,
                 medicare,
-                invContrib
-        );
+                invContrib);
     }
 
-    private Integer preTaxTarget (Integer targetIncome) {
+    private Integer preTaxTarget(Integer targetIncome) {
         int testAmt = 2 * targetIncome;
-        int increment = (int)Math.round(targetIncome * 0.5);
+        int increment = (int) Math.round(targetIncome * 0.5);
 
         IncomeProfileDTO tester = IncomeProfileDTO.testProfile(testAmt, targetIncome);
 
-        int postTax = (int)Math.round(
+        int postTax = (int) Math.round(
                 taxTime(
                         tester,
                         false,
                         0f,
                         false,
-                        false
-                ).netWorth().getNetIncome());
+                        false).netWorth().getNetIncome());
 
         while (postTax != targetIncome) {
             if (postTax > targetIncome) {
-              tester.getNetWorth().setNetIncome(
-                      Math.round(tester.getNetWorth().getNetIncome() - increment)
-              );
+                tester.getNetWorth().setNetIncome(
+                        Math.round(tester.getNetWorth().getNetIncome() - increment));
 
-              increment *= 0.5;
+                increment *= 0.5;
             } else {
-              tester.getNetWorth().setNetIncome(
-                      Math.round(tester.getNetWorth().getNetIncome() + increment)
-              );
+                tester.getNetWorth().setNetIncome(
+                        Math.round(tester.getNetWorth().getNetIncome() + increment));
             }
-            postTax = (int)Math.round(
+            postTax = (int) Math.round(
                     taxTime(
                             tester,
                             false,
                             0f,
                             false,
-                            false
-                    ).netWorth().getNetIncome());
+                            false).netWorth().getNetIncome());
         }
 
         return tester.getNetWorth().getNetIncome();
     }
 
     private int getFireNumber(Integer income) {
-        return (int)Math.round(income / 0.04);
+        return (int) Math.round(income / 0.04);
     }
 
     private boolean invTargetReached(
             Integer balance,
             Float growth,
             Integer required,
-            Integer currentAge
-    ) {
+            Integer currentAge) {
         int age = currentAge;
         int invBal = balance;
-        int target = (int)Math.round(required * 2); // safety factor
-//        int target = required;
+        int target = (int) Math.round(required * 2); // safety factor
+        // int target = required;
 
-        while(age <= 60) {
+        while (age <= 60) {
             age++;
             int invGrowth = updateInvestments(invBal, 0, growth).increaseAmt();
             int withdrawal = invGrowth > target ? invGrowth : target;
             invBal = Math.round(invBal * (1 + growth / 100) - withdrawal);
 
-            // if at any point before reaching age 60, invBal reaches <0, then balance is insufficient
+            // if at any point before reaching age 60, invBal reaches <0, then balance is
+            // insufficient
             if (invBal < 0) {
                 return false;
             }
@@ -309,35 +302,34 @@ public class CalculatorService {
             Integer expenses,
             Integer contrib,
             Integer age,
-            Float growth
-    ) {
+            Float growth) {
         int year = 0;
         int target = getFireNumber(expenses);
 
         // Balance by age 60 without further contributions (growth is taxed 15%)
-        double retireBal = balance * Math.pow(1 + (growth/100 * 0.85), 60 - age);
+        double retireBal = balance * Math.pow(1 + (growth / 100 * 0.85), 60 - age);
 
-        // If super balance is not sufficient to reach target, increment by a year and contribute to super
+        // If super balance is not sufficient to reach target, increment by a year and
+        // contribute to super
         while (retireBal < target) {
             year++;
             age++;
             balance = updateSuper(balance, contrib, growth);
-            retireBal = balance * Math.pow(1 + (growth/100 * 0.85), 60 - age);
+            retireBal = balance * Math.pow(1 + (growth / 100 * 0.85), 60 - age);
         }
 
-        return new SuperTargetDTO(age, balance, target, (int)Math.round(retireBal));
+        return new SuperTargetDTO(age, balance, target, (int) Math.round(retireBal));
     }
 
     public FireResult timeToFire(
             IncomeProfileDTO fullProfile,
             Integer age,
-            Float growth
-    ) {
-        int reqIncome = preTaxTarget(fullProfile.getProfile().expenses());
-//        System.out.println("Required income/Pre-tax target is: " + reqIncome);
+            Float growth) {
+        int reqIncome = preTaxTarget(fullProfile.getProfile().retirementExpenses());
+        // System.out.println("Required income/Pre-tax target is: " + reqIncome);
 
         int fireNum = getFireNumber(reqIncome);
-//        System.out.println("Fire number is: " + fireNum);
+        // System.out.println("Fire number is: " + fireNum);
         int startAge = age;
 
         int year = 0;
@@ -348,17 +340,13 @@ public class CalculatorService {
                 yearEnd.getNetWorth().getHelpBalance(),
                 yearEnd.getNetWorth().getInvestmentsBalance(),
                 yearEnd.getNetWorth().getSuperBalance(),
-                yearEnd.getNetWorth().result()
-        );
+                yearEnd.getNetWorth().result());
 
-        while (
-                !invTargetReached(
-                        yearEnd.getNetWorth().getInvestmentsBalance(),
-                        growth,
-                        reqIncome,
-                        age
-                )
-        ) {
+        while (!invTargetReached(
+                yearEnd.getNetWorth().getInvestmentsBalance(),
+                growth,
+                reqIncome,
+                age)) {
             year++;
             age++;
             AnnualResult netPosition = taxTime(yearEnd, false, growth, false, true);
@@ -372,8 +360,7 @@ public class CalculatorService {
                     yearEnd.getNetWorth().getInvestmentsBalance(),
                     yearEnd.getNetWorth().getSuperBalance(),
                     netPosition.availableToInvest(),
-                    yearEnd.getNetWorth().result()
-            );
+                    yearEnd.getNetWorth().result());
         }
 
         System.out.println("Investments will reach target balance at age " + age);
@@ -381,11 +368,10 @@ public class CalculatorService {
 
         SuperTargetDTO targetSuper = superTargetReached(
                 yearEnd.getNetWorth().getSuperBalance(),
-                yearEnd.getProfile().expenses(),
+                fullProfile.getProfile().retirementExpenses(),
                 27500,
                 age,
-                growth
-        );
+                growth);
 
         while (age < targetSuper.age() + 1) {
             year++;
@@ -402,8 +388,7 @@ public class CalculatorService {
                     yearEnd.getNetWorth().getInvestmentsBalance(),
                     yearEnd.getNetWorth().getSuperBalance(),
                     netPosition.availableToInvest(),
-                    yearEnd.getNetWorth().result()
-            );
+                    yearEnd.getNetWorth().result());
         }
 
         int fireYears = year;
@@ -414,21 +399,18 @@ public class CalculatorService {
                         reqIncome,
                         yearEnd.getNetWorth().getHelpBalance(),
                         yearEnd.getNetWorth().getSuperBalance(),
-                        yearEnd.getNetWorth().getInvestmentsBalance()
-                ),
+                        yearEnd.getNetWorth().getInvestmentsBalance()),
                 new IncomeSuperDTO(
                         reqIncome,
                         false,
                         0f,
-                        false
-                ),
+                        false),
                 new ProfileInfoDTO(
-                        yearEnd.getProfile().expenses(),
+                        yearEnd.getProfile().retirementExpenses(),
+                        yearEnd.getProfile().retirementExpenses(),
                         0,
                         0,
-                        yearEnd.getProfile().privateHospitalCover()
-                )
-        );
+                        yearEnd.getProfile().privateHospitalCover()));
 
         while (age < 60) {
             year++;
@@ -445,15 +427,13 @@ public class CalculatorService {
                     fireProfile.getNetWorth().getInvestmentsBalance(),
                     fireProfile.getNetWorth().getSuperBalance(),
                     netPosition.availableToInvest(),
-                    fireProfile.getNetWorth().result()
-            );
+                    fireProfile.getNetWorth().result());
         }
 
         System.out.println("Final Net Worth @ 60: " + fireProfile.getNetWorth().result());
 
         return new FireResult(
                 fireProfile,
-                fireYears
-        );
+                fireYears);
     }
 }

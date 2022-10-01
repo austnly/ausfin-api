@@ -16,7 +16,7 @@ public class IncomeProfileDTO {
     public static IncomeProfileDTO testProfile(Integer income, Integer expenses) {
         NetWorthDTO netWorthDTO = new NetWorthDTO(income, 0, 0, 0);
         IncomeSuperDTO incomeSuperDTO = new IncomeSuperDTO(income, false, 0f, false);
-        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(expenses, 0, 0,false);
+        ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(expenses, expenses, 0, 0, false);
         return new IncomeProfileDTO(netWorthDTO, incomeSuperDTO, profileInfoDTO);
     }
 
@@ -25,20 +25,18 @@ public class IncomeProfileDTO {
                 profile.getNetWorth().getNetIncome(),
                 profile.getNetWorth().getHelpBalance(),
                 profile.getNetWorth().getSuperBalance(),
-                profile.getNetWorth().getInvestmentsBalance()
-        );
+                profile.getNetWorth().getInvestmentsBalance());
         IncomeSuperDTO incomeSuperDTO = new IncomeSuperDTO(
                 profile.getSuperInfo().income(),
                 profile.getSuperInfo().superInclusive(),
                 profile.getSuperInfo().rate(),
-                profile.getSuperInfo().maxSuperContributions()
-        );
+                profile.getSuperInfo().maxSuperContributions());
         ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO(
+                profile.getProfile().expenses(),
                 profile.getProfile().expenses(),
                 profile.getProfile().deductions(),
                 profile.getProfile().fringeBenefits(),
-                profile.getProfile().privateHospitalCover()
-        );
+                profile.getProfile().privateHospitalCover());
         return new IncomeProfileDTO(netWorthDTO, incomeSuperDTO, profileInfoDTO);
     }
 

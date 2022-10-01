@@ -1,8 +1,9 @@
 package ausfin.api.records;
 
 public record ProfileInfoDTO(
-        Integer expenses,
-        Integer deductions,
-        Integer fringeBenefits,
-        Boolean privateHospitalCover) {
+                Integer expenses,
+                Integer retirementExpenses,
+                Integer deductions,
+                Integer fringeBenefits,
+                Boolean privateHospitalCover) {
 }
