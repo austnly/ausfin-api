@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -26,12 +27,10 @@ public class TablesService {
 
     private ArrayList<ArrayList<Float>> jsonFileToTwoDFloatArr(String fileName) {
         try {
-            String path = new File("").getAbsolutePath();
-            path = path.concat("/src/main/resources/static/").concat(fileName);
             Gson gson = new GsonBuilder().create();
             Type listType = new TypeToken<ArrayList<ArrayList<Float>>>(){}.getType();
-            return gson.fromJson(new FileReader(path), listType);
-        } catch (IOException e) {
+            return gson.fromJson(new InputStreamReader(getClass().getResourceAsStream("/static/".concat(fileName))), listType);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

@@ -213,7 +213,7 @@ public class CalculatorService {
                     helpOver +
                     medicare +
                     mlsRepay +
-                    incomeProfileDTO.getProfile().expenses());
+                    incomeProfileDTO.getProfile().retirementExpenses());
         }
 
         // Update investments
