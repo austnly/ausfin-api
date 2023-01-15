@@ -6,7 +6,7 @@ A Java/Spring API project to handle the calculation logic for my aus/fin project
 
 _Project is currently in progress + calculations may be buggy!_
 
-### 🚀 [Live API @ https://ausfin-api.herokuapp.com/](https://ausfin-api.herokuapp.com/)
+### 🚀 [Live API @ https://ausfin-api-production.up.railway.app/](https://ausfin-api-production.up.railway.app/)
 
 ## Current Working Endpoints
 

@@ -2,23 +2,24 @@ package ausfin.api.records;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 public record DetailedTaxDTO(
                 @NotNull @Positive Integer grossIncome,
-                @NotNull Integer helpBalance,
-                @NotNull Integer superBalance,
-                @NotNull Integer investmentsBalance,
+                @NotNull @PositiveOrZero Integer helpBalance,
+                @NotNull @PositiveOrZero Integer superBalance,
+                @NotNull @PositiveOrZero Integer investmentsBalance,
                 Boolean superInclusive,
 
-                @NotNull @Positive Float superContributionRate,
+                @NotNull @PositiveOrZero Float superContributionRate,
                 Boolean maxSuperContributions,
-                @NotNull Integer retirementExpenses,
-                @NotNull Integer expenses,
-                @NotNull Integer deductions,
-                @NotNull Integer fringeBenefits,
+                @NotNull @PositiveOrZero Integer retirementExpenses,
+                @NotNull @PositiveOrZero Integer expenses,
+                @NotNull @PositiveOrZero Integer deductions,
+                @NotNull @PositiveOrZero Integer fringeBenefits,
                 Boolean privateHospitalCover,
                 // @NotNull Boolean maxSuper,
-                @NotNull Float assumedGrowth
+                @NotNull @PositiveOrZero Float assumedGrowth
 // @NotNull Boolean drawingPhase,
 // @NotNull Boolean paySuper
 ) {
